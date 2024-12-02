@@ -44,25 +44,25 @@ func main() {
 	// Retrieve all the namespaces of type "development"
 	nsList, resp, err := client.NamespacesAPI.ListNamespaces(ctx).Type_(developmentNamespaceType).Execute()
 	if err != nil {
-		logger.Error(fmt.Sprintf("There was an error requesting the namespaces %s. Full HTTP response: %v", err, resp))
+		logger.Error(fmt.Sprintf("There was an error requesting the namespaces '%s'. Full HTTP response: %v", err, resp))
 		os.Exit(1)
 	}
 
 	for _, ns := range nsList {
-		logger.Info(fmt.Sprintf("Processing namespace %s", ns.Name))
+		logger.Info(fmt.Sprintf("Processing namespace '%s'", ns.Name))
 
 		// We skip persistent namespaces and those that are already sleeping
 		if ns.Persistent || ns.Status == namespaceSleepingStatus {
-			logger.Info(fmt.Sprintf("Skipping namespace %s, as it is persistent or already sleeping", ns.Name))
+			logger.Info(fmt.Sprintf("Skipping namespace '%s', as it is persistent or already sleeping", ns.Name))
 			logger.Info("-----------------------------------------------")
 			continue
 		}
 
-		logger.Info(fmt.Sprintf("Sleeping namespace %s", ns.Name))
+		logger.Info(fmt.Sprintf("Sleeping namespace '%s'", ns.Name))
 
 		output, err := sleepNamespace(ns.Name)
 		if err != nil {
-			logger.Error(fmt.Sprintf("Error sleeping namespace %s: %s", ns.Name, err))
+			logger.Error(fmt.Sprintf("Error sleeping namespace '%s': %s", ns.Name, err))
 		} else {
 			logger.Info(output)
 		}
@@ -81,8 +81,7 @@ func getAPIClient(apiHost, token string) *okteto.APIClient {
 }
 
 func sleepNamespace(nsName string) (string, error) {
-	// cmd := exec.Command("bash", "-c", fmt.Sprintf(sleepNSCommandTemplate, nsName))
-	cmd := exec.Command("bash", "-c", "echo hi!")
+	cmd := exec.Command("bash", "-c", fmt.Sprintf(sleepNSCommandTemplate, nsName))
 
 	out, err := cmd.CombinedOutput()
 	if err != nil {
