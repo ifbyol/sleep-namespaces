@@ -80,6 +80,7 @@ func getAPIClient(apiHost, token string) *okteto.APIClient {
 	return okteto.NewAPIClient(config)
 }
 
+// sleepNamespace executes the Okteto CLI command to sleep a namespace
 func sleepNamespace(nsName string) (string, error) {
 	cmd := exec.Command("bash", "-c", fmt.Sprintf(sleepNSCommandTemplate, nsName))
 
